@@ -10,16 +10,14 @@ const inputStyle = {
 };
 
 const InputPin = (props) => {
-  const { onChange, ...otherProps } = props;
+  const { onChange } = props;
  
   return (
-    <>
       <input 
       type="password"
       maxLength="4"
       onChange={onChange}
       />
-    </>
   )
 }
 
