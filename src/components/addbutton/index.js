@@ -1,13 +1,11 @@
 import styled from 'styled-components';
 
-const GenericButton = styled.button`
+const AddButton = styled.button`
   background-color: #312e38;
   border: 1px solid #312e38;
   border-radius: 5px;
   color: white;
-  padding: 10px;
-  margin-top: 30px;
-  font-size: 12px;
+  padding: 5px 5px 2px 5px;
 
   &:hover {
     background-color: white;
@@ -16,4 +14,4 @@ const GenericButton = styled.button`
   }
 `;
 
-export default GenericButton;
+export default AddButton;

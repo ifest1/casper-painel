@@ -8,8 +8,8 @@ const ToastContainer = () => {
       <Toast>
       <AiOutlineInfoCircle size={20}/>
       <div>
-        <strong>Erro</strong>
-        <p>Descricao do erro</p>
+        <strong>To-do</strong>
+        <p>Toast placeholder</p>
       </div>
 
       <button type="button">

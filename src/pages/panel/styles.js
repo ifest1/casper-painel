@@ -3,9 +3,11 @@ import styled from 'styled-components';
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
   align-items: center;
   justify-items: center;
   margin-top: 50px;
+  margin-bottom: 100px;
 `;
 
 
@@ -27,6 +29,7 @@ const Table = styled.table`
   overflow: hidden;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 
+
   > thead > tr {
     background-color: #312e38;
     color: #ffffff;
@@ -35,15 +38,14 @@ const Table = styled.table`
   }
   > thead > tr {
     background-color: #312e38;
-    text-align: left;
-    font-weight: bold;
-  }
-  > th > td {
-    padding: 12px 15px;
+    text-align: center;
+    font-weight: 500;
   }
 
   > tbody > tr {
+    height: 100px;
     border-bottom: 1px solid #dddddd;
+    text-align: center;
   }
 
   > tbody > tr:nth-of-type(even) {
@@ -55,8 +57,7 @@ const Table = styled.table`
   }
 
   > tbody > tr:hover {
-    color: #eee;
-    background-color: #312e38;
+    background-color: #DCDCDC;
   }
 `;
 

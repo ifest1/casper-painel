@@ -1,27 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Table, Items } from './styles';
+import { Redirect } from 'react-router-dom';
 import Popup from '../../components/popup/index';
-import ToastContainer from '../../components/toast/index';
-import IconButton from '../../components/iconbutton';
+import AddButton from '../../components/addbutton';
 import GenericButton from '../../components/genericbutton';
-import { FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { renderHeader, renderBody } from './table_render';
+import Form from '../../components/form/index';
+import { FiPlus } from 'react-icons/fi';
 import api from '../../services/api';
 
 function News() {
-  const jwt = localStorage.getItem('jwt');
+  const [jwt, setJwt] = useState(localStorage.getItem('jwt'));
   const [news, setNews] = useState([]);
   const [addPopup, setAddPopup] = useState(false);
   const [editPopup, setEditPopup] = useState(false);
-
   const [toUpdate, setToUpdate] = useState({});
-
+  const tableHeaders = ['Titulo', 'Categoria', 'Descrição', 'URL Imagem', 'URL Notícia', '', ''];
   const headers = {
     'x-access-token': jwt,
   }
   
   useEffect(() => {
     api.get('/news', {headers: headers}).then(response => {
-      console.log(response.data);
       setNews(response.data);
     })
   }, [])
@@ -29,76 +29,71 @@ function News() {
   function handleAddNews(data){
     api.post('/news', data, {headers: headers}).then(response => {
       setNews([...news, response.data]);
+      setAddPopup(false);
     })
   }
 
-  function handleRemoveNews(id){
-    api.delete(`/news/${id}`, {headers: headers}).then(response => {
-      console.log(response.data);
+  function handleUpdateNews({index, data}) {
+    let id = data._id;
+    let temp = news;
+    temp[index] = data;
+
+    api.patch(`/news/${id}`, data, {headers: headers}).then(response => {
+      setNews(temp);
+      setEditPopup(false);
+      setToUpdate({});
     })
   }
 
-  function handleUpdateNews(patch) {
-    let id = patch._id;
-    api.patch(`/news/${id}`, patch, {headers: headers}).then(response => {
-      console.log(response.data);
-    })
-    
+
+  function handleDeleteNews(id) {
+    api.delete(`news/${id}`, {headers: headers}).then(response => {
+      let temp = news.filter((item) => item._id !== id);
+      console.log('teste');
+      setNews(temp);
+    });
+  }
+
+  function deleteRow(index){
+    let currentItem = news[index];
+    handleDeleteNews(currentItem._id);
   }
 
   function editRow(index) {
-    let currentItem = news[index];
+    let currentItem = {index}
+    currentItem.data = news[index];
     setToUpdate(currentItem);
     setEditPopup(true);
   }
 
-
-  const renderBody = () => {
-    return news && news.map(({_id, title, category, description, img_url, news_url}, index) => {
-      return (
-        <tr key={_id}>
-          <td>{_id}</td>
-          <td>{title}</td>
-          <td>{category}</td>
-          <td>{description}</td>
-          <td>{img_url}</td>
-          <td>{news_url}</td>
-          <td><IconButton type="button" onClick={()=> handleRemoveNews(_id)}><FiTrash2/></IconButton></td>
-          <td><IconButton type="button" onClick={() => editRow(index)}><FiEdit2/></IconButton></td>
-        </tr>
-      )
-    })
+  function logout() {
+    localStorage.removeItem('jwt');
+    setJwt('');
   }
 
-  const renderHeader = () => {
-    let headerElement = ['Id', 'Titulo', 'Categoria', 'Descrição', 'URL Imagem', 'URL Notícia', '', ''];
-
-        return headerElement.map((key, index) => {
-            return <th key={index}>{key.toUpperCase()}</th>
-        })
+  if (!jwt) {
+    return <Redirect to='/'/>
   }
-
   return (
       <Container>
-        <ToastContainer/>
           <Items>
+          <GenericButton onClick={() => logout()}>Logout</GenericButton>
             <Table>
               <thead>
-                <tr>
-                  {renderHeader()}
-                </tr>
+                <tr>{renderHeader(tableHeaders)}</tr>
               </thead>
-              <tbody>
-                {renderBody()}
-              </tbody>
+              <tbody>{renderBody(news, deleteRow, editRow)}</tbody>
             </Table>
-          <GenericButton type="button" onClick={() => setAddPopup(true)}><FiPlus/></GenericButton>
+          <AddButton type="button" onClick={() => setAddPopup(true)}>
+            <FiPlus/>
+          </AddButton>
           <Popup trigger={addPopup} setTrigger={setAddPopup}>
             <h2>Adicionar notícia</h2>
+            <Form saveHandler={handleAddNews}/>
           </Popup>
           <Popup trigger={editPopup} setTrigger={setEditPopup}>
             <h2>Editar notícia</h2>
-            <GenericButton onClick={(handleUpdateNews(toUpdate))}>Salvar</GenericButton>
+            <Form saveHandler={handleUpdateNews} form={toUpdate}/>
           </Popup>
           </Items>
       </Container>

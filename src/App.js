@@ -10,7 +10,7 @@ const App = () => {
       <GlobalStyle/>
       <Router>
         <Switch>
-          <Route path="/login" exact component={Login}/>
+          <Route path="/" exact component={Login}/>
           <Route path="/panel" exact component={News}/>
         </Switch>      
       </Router>

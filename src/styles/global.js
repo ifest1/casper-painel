@@ -12,6 +12,8 @@ export default createGlobalStyle`
     background-color: #312e38;
     color: black;
     -webkit-font-smoothing: antialiased;
+    display: flex;
+    justify-content: center;
   }
 
   body, input, button {
